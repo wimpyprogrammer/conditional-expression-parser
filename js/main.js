@@ -3,6 +3,9 @@
 define(function(require, exports, module) {
   'use strict';
   
+  // load global polyfills
+  require('polyfills');
+  
   var $ = require('jquery'),
       Expression = require('expression'),
       Submission = require('submission');
