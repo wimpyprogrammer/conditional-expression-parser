@@ -6,9 +6,10 @@ define(function(require, exports, module) {
       Operator = require('operator');
   
   function Expression(text) {
-    this.operators = [/*Operator*/];
-    this.conditions = [/*Condition*/];
-    this.truePaths = [/*{ condition, result }*/];
+    var self = this;
+    self.operators = [/*Operator*/];
+    self.conditions = [/*Condition*/];
+    self.truePaths = [/*{ condition, result }*/];
     
     // trim surrounding space and parenthesis pairs
     var textToParse = Utils.trimParenthesisPairs(text);
@@ -54,7 +55,7 @@ define(function(require, exports, module) {
     for(j = 0; j < textChunks.length; j++) {
       // If this chunk is a sub-expression, just store it without parsing
       if(textChunks[j] instanceof Expression) {
-        this.conditions.push(textChunks[j]);
+        self.conditions.push(textChunks[j]);
       } else {
         conditionChunks = textChunks[j].split(matchAndOr);
         for(k = 0; k < conditionChunks.length; k++) {
@@ -63,47 +64,52 @@ define(function(require, exports, module) {
           // Determine if an AND operator or an OR operator was found.
           // If so, store which was found and then remove it.
           if((leadingAndMatch = condition.match(captureLeadingAnd)) !== null) {
-            this.operators.push(new Operator(true)); // AND operator
+            self.operators.push(new Operator(true)); // AND operator
             condition = condition.substring(leadingAndMatch[0].length);
           } else if((leadingOrMatch = condition.match(captureLeadingOr)) !== null) {
-            this.operators.push(new Operator(false)); // OR operator
+            self.operators.push(new Operator(false)); // OR operator
             condition = condition.substring(leadingOrMatch[0].length);
           }
           
           // Store anything that's not still empty.
           condition = condition.trim();
           if(condition !== '') {
-            this.conditions.push(new Condition(condition));
+            self.conditions.push(new Condition(condition));
           }
         }
       }
     }
     
-    this.hasMixedOperators = Utils.hasMixedOperators(this.operators);
+    self.hasMixedOperators = Utils.hasMixedOperators(self.operators);
     
     // Calculate the combinations of Conditions that will resolve to true
     var truePath;
-    if(!this.hasMixedOperators) { // TODO: Can we calculate when operators are mixed?
-      if(this.conditions.length === 1) {
+    if(!self.hasMixedOperators) { // TODO: Can we calculate when operators are mixed?
+      if(self.conditions.length === 1) {
         // There's only one condition, so it must be true
-        this.truePaths.push([{ condition: this.conditions[0], result: true }]);
+        self.truePaths.push([{ condition: self.conditions[0], result: true }]);
       } else {
-        if(this.operators[0].isAnd()) {
+        if(self.operators[0].isAnd()) {
+          
           // Create one truePath where every condition is true
           truePath = [];
-          for(l = 0; l < this.conditions.length; l++) {
-            truePath.push({ condition: this.conditions[l], result: true });
+          
+          for(l = 0; l < self.conditions.length; l++) {
+            truePath.push({ condition: self.conditions[l], result: true });
           }
-          this.truePaths.push(truePath);
+          self.truePaths.push(truePath);
+          
         } else {
+          
           // Create a separate truePath for each Condition where one is true
-          for(l = 0; l < this.conditions.length; l++) {
+          for(l = 0; l < self.conditions.length; l++) {
             truePath = [];
-            for(m = 0; m < this.conditions.length; m++) {
-              truePath.push({ condition: this.conditions[m], result: (l === m) });
+            for(m = 0; m < self.conditions.length; m++) {
+              truePath.push({ condition: self.conditions[m], result: (l === m) });
             }
-            this.truePaths.push(truePath);
+            self.truePaths.push(truePath);
           }
+          
         }
       }
     }
@@ -112,6 +118,7 @@ define(function(require, exports, module) {
   }
   
   Expression.prototype.expandTruePaths = function() {
+    var self = this;
       
     var replaceSubExpressionWithTruePath = function(appendInto, toAppend, subExpressionPos) {
       // Create a copy of the object so that modifications will not leak in or out by reference
@@ -122,14 +129,14 @@ define(function(require, exports, module) {
       return tempAppendInto;
     };
     
-    var expandedTruePaths = Utils.cloneDeep(this.truePaths),
+    var expandedTruePaths = Utils.cloneDeep(self.truePaths),
         i, j, k, kMax, subTruePaths, falseSubTruePath, tempTruePath;
     
     // Iterate through the first truePath, as a template of the conditions and sub-expressions.
     // Step through it backwards so expanded paths will not throw off the upcoming indicies.
-    for(i = this.truePaths[0].length - 1; i >= 0; i--) {
-      if(this.truePaths[0][i].condition instanceof Expression) {
-        subTruePaths = this.truePaths[0][i].condition.expandTruePaths();
+    for(i = self.truePaths[0].length - 1; i >= 0; i--) {
+      if(self.truePaths[0][i].condition instanceof Expression) {
+        subTruePaths = self.truePaths[0][i].condition.expandTruePaths();
         
         // Cross-apply the child true paths to the one for this Expression
         for(k = expandedTruePaths.length - 1; k >= 0; k--) {
