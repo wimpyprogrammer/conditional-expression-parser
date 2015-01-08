@@ -114,29 +114,16 @@ define(function(require, exports, module) {
   Expression.prototype.expandTruePaths = function() {
       
     var replaceSubExpressionWithTruePath = function(appendInto, toAppend, subExpressionPos) {
-      var resultToInsert = appendInto[subExpressionPos].result,
-          tempAppendInfo, tempToAppend, i, spliceArgs;
+      // Create a copy of the object so that modifications will not leak in or out by reference
+      var tempAppendInto = Utils.cloneDeep(appendInto),
+          spliceArgs = [subExpressionPos, 1].concat(toAppend);
+      Array.prototype.splice.apply(tempAppendInto, spliceArgs);
       
-      // Create a copy of the objects so that modifications will not leak in or out by reference
-      tempAppendInfo = Utils.cloneDeep(appendInto);
-      tempToAppend = Utils.cloneDeep(toAppend);
-      
-      // If the Expression does not need to be true in this path, set all its conditions to false
-      // TODO: Move this to the (expandedTruePaths[k][i].result === false) condition
-      if(!resultToInsert) {
-        for(i = 0; i < tempToAppend.length; i++) {
-          tempToAppend[i].result = false;
-        }
-      }
-      
-      spliceArgs = [subExpressionPos, 1].concat(tempToAppend);
-      Array.prototype.splice.apply(tempAppendInfo, spliceArgs);
-      
-      return tempAppendInfo;
+      return tempAppendInto;
     };
     
     var expandedTruePaths = Utils.cloneDeep(this.truePaths),
-        i, j, k, kMax, subTruePaths, tempTruePath;
+        i, j, k, kMax, subTruePaths, falseSubTruePath, tempTruePath;
     
     // Iterate through the first truePath, as a template of the conditions and sub-expressions.
     // Step through it backwards so expanded paths will not throw off the upcoming indicies.
@@ -148,8 +135,11 @@ define(function(require, exports, module) {
         for(k = expandedTruePaths.length - 1; k >= 0; k--) {
           
           if(expandedTruePaths[k][i].result === false) {
-            // If the sub-expression doesn't need to be true, then we can replace it with a single entry where all conditions are false
-            tempTruePath = replaceSubExpressionWithTruePath(expandedTruePaths[k], subTruePaths[0], i);
+            // If the sub-expression doesn't need to be true, create a version where all conditions are false
+            falseSubTruePath = Utils.cloneDeep(subTruePaths[0]);
+            falseSubTruePath.forEach(function(e) { e.result = false; } );
+            // Insert these conditions once, no matter how many true paths the sub-Expression contains
+            tempTruePath = replaceSubExpressionWithTruePath(expandedTruePaths[k], falseSubTruePath, i);
             // Append the new true path after the existing one. Because k counts down, it won't be processed.
             expandedTruePaths.splice(k + 1, 0, tempTruePath);
           } else {
