@@ -13,16 +13,17 @@ define(function(require, exports, module) {
   function printHeadings(/*Expression*/ expression, newDepth) {
     var headings = '',
       depth = newDepth || 0,
-      i, headingClass, operatorClass;
-    for(i = 0; i < expression.conditions.length; i++) {
-      if(expression.conditions[i] instanceof Expression) {
+      headingClass, operatorClass;
+    
+    expression.conditions.forEach(function(e, i, arr) {
+      if(e instanceof Expression) {
         // Recursively print sub-expressions
-        headings += printHeadings(expression.conditions[i], depth + 1);
+        headings += printHeadings(e, depth + 1);
       } else {
         headingClass = 'condition depth-' + ((depth % 4) + 1);
         if(i === 0) { headingClass += ' begin-expression'; }
-        if(i === expression.conditions.length - 1) { headingClass += ' end-expression'; }
-        headings += '<th class="' + headingClass + '">' + expression.conditions[i] + '<\/th>';
+        if(i === arr.length - 1) { headingClass += ' end-expression'; }
+        headings += '<th class="' + headingClass + '">' + e + '<\/th>';
       }
       
       // Print the operator
@@ -30,23 +31,24 @@ define(function(require, exports, module) {
         operatorClass = 'operator depth-' + ((depth % 4) + 1);
         headings += '<th class="' + operatorClass + '">' + expression.operators[i] + '<\/th>';
       }
-    }
+    });
     return headings;
   }
   
   function printCells(/*Expression*/ expression, newDepth) {
     var cells = '',
         depth = newDepth || 0,
-        expandedTruePaths = expression.expandTruePaths(),
-        i, j, cellClass, operatorClass;
-    for(i = 0; i < expandedTruePaths.length; i++) {
+        expandedTruePaths = expression.expandTruePaths();
+    
+    expandedTruePaths.forEach(function(expandedTruePath) {
       cells += '<tr>';
-      for(j = 0; j < expandedTruePaths[i].length; j++) {
-        if(j !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; } // 
-        cells += '<td class="condition">' + (expandedTruePaths[i][j].result ? 'true' : '') + '<\/td>';
-      }
+      expandedTruePath.forEach(function(truePathCondition, i) {
+        if(i !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; } // 
+        cells += '<td class="condition">' + (truePathCondition.result ? 'true' : '') + '<\/td>';
+      });
       cells += '<\/tr>';
-    }
+    });
+    
     return cells;
   }
 
