@@ -88,15 +88,10 @@ define(function(require, exports, module) {
   };
   
   exports.hasMixedOperators = function(operators) {
-    var i;
-    if(operators.length > 1) {
-      for(i = 1; i < operators.length; i++) {
-        if(operators[i].isAnd() !== operators[i - 1].isAnd()) {
-          return true;
-        }
-      }
-    }
-    return false;
+    var preceedingConditionMismatch = function(e, i, arr) {
+      return (i > 0 && (e.isAnd() !== arr[i - 1].isAnd()));
+    };
+    return (operators.length > 1 && operators.some(preceedingConditionMismatch));
   };
   
   function isCustomObject(o) {
