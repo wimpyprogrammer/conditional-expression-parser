@@ -16,8 +16,7 @@ define(function(require, exports, module) {
     var topLevelParenthesis = Utils.findTopLevelParenthesis(textToParse);
     
     var textChunks = [],
-        lastPosition = 0,
-        i, j, k, l, m; // iterators
+        lastPosition = 0;
     
     // Break the text into sub-expressions and top-level expressions
     // TODO: Identify when a ! precedes an Expression, and pass that into the constructor
@@ -25,18 +24,21 @@ define(function(require, exports, module) {
       // There are no sub-expressions to extract.  Store the entire string
       textChunks.push(textToParse);
     } else {
-      for(i = 0; i < topLevelParenthesis.length; i++) {
+      
+      topLevelParenthesis.forEach(function(e) {
         // Store the text between previous chunk and start of this Expression
-        textChunks.push(textToParse.substring(lastPosition, topLevelParenthesis[i].start));
+        textChunks.push(textToParse.substring(lastPosition, e.start));
         // Store the sub-expression
-        textChunks.push(new Expression(textToParse.substring(topLevelParenthesis[i].start, topLevelParenthesis[i].end + 1)));
+        textChunks.push(new Expression(textToParse.substring(e.start, e.end + 1)));
         // Advance the pointer
-        lastPosition = topLevelParenthesis[i].end + 1;
-      }
+        lastPosition = e.end + 1;
+      });
+      
       // Store any trailing text
       if(lastPosition < textToParse.length - 1) {
         textChunks.push(textToParse.substring(lastPosition));
       }
+      
     }
     
     var conditionChunks = [],
@@ -52,15 +54,14 @@ define(function(require, exports, module) {
         condition, leadingAndMatch, leadingOrMatch;
     
     // TODO: Identify when the condition is preceded by a ! or has a negative comparison
-    for(j = 0; j < textChunks.length; j++) {
+    textChunks.forEach(function(textChunk) {
       // If this chunk is a sub-expression, just store it without parsing
-      if(textChunks[j] instanceof Expression) {
-        self.conditions.push(textChunks[j]);
+      if(textChunk instanceof Expression) {
+        self.conditions.push(textChunk);
       } else {
-        conditionChunks = textChunks[j].split(matchAndOr);
-        for(k = 0; k < conditionChunks.length; k++) {
-          condition = conditionChunks[k];
-          
+        conditionChunks = textChunk.split(matchAndOr);
+        
+        conditionChunks.forEach(function(condition) {
           // Determine if an AND operator or an OR operator was found.
           // If so, store which was found and then remove it.
           if((leadingAndMatch = condition.match(captureLeadingAnd)) !== null) {
@@ -76,9 +77,10 @@ define(function(require, exports, module) {
           if(condition !== '') {
             self.conditions.push(new Condition(condition));
           }
-        }
+        });
+        
       }
-    }
+    });
     
     self.hasMixedOperators = Utils.hasMixedOperators(self.operators);
     
@@ -93,22 +95,21 @@ define(function(require, exports, module) {
           
           // Create one truePath where every condition is true
           truePath = [];
-          
-          for(l = 0; l < self.conditions.length; l++) {
-            truePath.push({ condition: self.conditions[l], result: true });
-          }
+          self.conditions.forEach(function(e) {
+            truePath.push({ condition: e, result: true });
+          });
           self.truePaths.push(truePath);
           
         } else {
           
           // Create a separate truePath for each Condition where one is true
-          for(l = 0; l < self.conditions.length; l++) {
+          self.conditions.forEach(function(unused, i1) {
             truePath = [];
-            for(m = 0; m < self.conditions.length; m++) {
-              truePath.push({ condition: self.conditions[m], result: (l === m) });
-            }
+            self.conditions.forEach(function(e, i2) {
+              truePath.push({ condition: e, result: (i1 === i2) });
+            });
             self.truePaths.push(truePath);
-          }
+          });
           
         }
       }
@@ -130,7 +131,7 @@ define(function(require, exports, module) {
     };
     
     var expandedTruePaths = Utils.cloneDeep(self.truePaths),
-        i, j, k, kMax, subTruePaths, falseSubTruePath, tempTruePath;
+        i, k, subTruePaths, falseSubTruePath, tempTruePath;
     
     // Iterate through the first truePath, as a template of the conditions and sub-expressions.
     // Step through it backwards so expanded paths will not throw off the upcoming indicies.
@@ -151,12 +152,12 @@ define(function(require, exports, module) {
             expandedTruePaths.splice(k + 1, 0, tempTruePath);
           } else {
             // The sub-expression needs to be true, so insert each of its true paths
-            for(j = subTruePaths.length - 1; j >= 0; j--) {
+            subTruePaths.forEach(function(e) {
               // Update this true path to replace the sub-expression with its expanded conditions
-              tempTruePath = replaceSubExpressionWithTruePath(expandedTruePaths[k], subTruePaths[j], i);
+              tempTruePath = replaceSubExpressionWithTruePath(expandedTruePaths[k], e, i);
               // Append the new true path after the existing one. Because k counts down, it won't be processed.
               expandedTruePaths.splice(k + 1, 0, tempTruePath);
-            }
+            });
           }
           
           // Remove the sub-expression, now that it's been replaced above by the expansion(s)
