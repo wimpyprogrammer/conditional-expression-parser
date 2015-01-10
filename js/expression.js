@@ -5,6 +5,23 @@ define(function(require, exports, module) {
       Condition = require('condition'),
       Operator = require('operator');
   
+  function calculateAllEvalPaths(conditions) {
+    // recursively calculate the eval paths of all the subsequent elements
+    var subEvalPaths = (conditions.length === 1) ? [[]] : calculateAllEvalPaths(conditions.slice(1)),
+        evalPaths = [],
+        tempEvalPath;
+    
+    // For each of the sub paths, create versions where this condition is true and false
+    subEvalPaths.forEach(function(e) {
+      (tempEvalPath = Utils.cloneDeep(e)).unshift({ condition: conditions[0], result: true });
+      evalPaths.push(tempEvalPath);
+      (tempEvalPath = Utils.cloneDeep(e)).unshift({ condition: conditions[0], result: false });
+      evalPaths.push(tempEvalPath);
+    });
+    
+    return evalPaths;
+  }
+  
   function Expression(text) {
     var self = this;
     self.operators = [/*Operator*/];
@@ -119,9 +136,18 @@ define(function(require, exports, module) {
           });
           
         } else { // XOR operator
-        
-          // TODO: Calculate the truePaths for XOR
-        
+          
+          // A XOR expression is true if it has an odd number of true conditions
+          var isTrueCondition = function(c) { return c.result; },
+              hasOddTrues = function(ep) {
+                return ep.filter(isTrueCondition).length % 2 === 1;
+              },
+              allEvalPaths = calculateAllEvalPaths(self.conditions);
+          
+          allEvalPaths.filter(hasOddTrues).forEach(function(truePath) {
+            self.truePaths.push(truePath);
+          });
+          
         }
       }
     }
