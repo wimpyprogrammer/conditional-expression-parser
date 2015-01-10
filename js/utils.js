@@ -90,7 +90,7 @@ define(function(require, exports, module) {
   
   exports.hasMixedOperators = function(operators) {
     var preceedingConditionMismatch = function(e, i, arr) {
-      return (i > 0 && (e.isAnd() !== arr[i - 1].isAnd()));
+      return (i > 0 && (e.toString() !== arr[i - 1].toString()));
     };
     return (operators.length > 1 && operators.some(preceedingConditionMismatch));
   };
