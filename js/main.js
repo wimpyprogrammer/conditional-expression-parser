@@ -38,13 +38,15 @@ define(function(require, exports, module) {
   function printCells(/*Expression*/ expression, newDepth) {
     var cells = '',
         depth = newDepth || 0,
-        expandedTruePaths = expression.expandTruePaths();
+        expandedTruePaths = expression.expandTruePaths(),
+        displayValue;
     
     expandedTruePaths.forEach(function(expandedTruePath) {
       cells += '<tr>';
       expandedTruePath.forEach(function(truePathCondition, i) {
-        if(i !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; } // 
-        cells += '<td class="condition">' + (truePathCondition.result ? 'true' : '') + '<\/td>';
+        if(i !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; }
+        displayValue = (truePathCondition.result === null) ? '' : truePathCondition.result;
+        cells += '<td class="condition">' + displayValue + '<\/td>';
       });
       cells += '<\/tr>';
     });

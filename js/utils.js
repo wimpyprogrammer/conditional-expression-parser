@@ -7,7 +7,8 @@ define(function(require, exports, module) {
   exports.tokensLineBreak = [ '\\r', '\\n', '\\r\\n' ];
   exports.tokensAnd = [ '&&', '\\sAND\\s' ]; // "&&" or "AND"
   exports.tokensOr = [ '\\|\\|', '\\sOR\\s' ]; // "||" or "OR"
-  exports.tokensAndOr = exports.tokensAnd.concat(exports.tokensOr);
+  exports.tokensXor = [ '\\^', '\\sXOR\\s' ]; // "^" or "XOR"
+  exports.tokensAndOrXor = [].concat(exports.tokensAnd, exports.tokensOr, exports.tokensXor);
   
   exports.tokensIgnoreLeading = [ '\\s', 'if', 'else', 'elseif', '\\}' ];
   exports.tokensIgnoreTrailing = [ '\\s', '\\{', ';' ];
@@ -19,7 +20,7 @@ define(function(require, exports, module) {
       // To determine if the parenthesis is a sub-expression or a function call, look at the preceding characters
       var precedingCharacters = string.substring(0, index + 1),
           matchConditional = new RegExp(
-            '(?:' + exports.tokensAndOr.join('|') + ')\\s*\\($'
+            '(?:' + exports.tokensAndOrXor.join('|') + ')\\s*\\($'
           , 'i');
       return !matchConditional.test(precedingCharacters);
     };

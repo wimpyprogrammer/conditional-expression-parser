@@ -42,8 +42,8 @@ define(function(require, exports, module) {
     }
     
     var conditionChunks = [],
-        matchAndOr = new RegExp(
-            '(\\s|\\b)(?=' + Utils.tokensAndOr.join('|') + ')'
+        matchAndOrXor = new RegExp(
+            '(\\s|\\b)(?=' + Utils.tokensAndOrXor.join('|') + ')'
         , 'ig'),
         captureLeadingAnd = new RegExp(
             '^(' + Utils.tokensAnd.join('|') + ')'
@@ -51,7 +51,10 @@ define(function(require, exports, module) {
         captureLeadingOr = new RegExp(
             '^(' + Utils.tokensOr.join('|') + ')'
         , 'ig'),
-        condition, leadingAndMatch, leadingOrMatch;
+        captureLeadingXor = new RegExp(
+            '^(' + Utils.tokensXor.join('|') + ')'
+        , 'ig'),
+        leadingAndMatch, leadingOrMatch, leadingXorMatch;
     
     // TODO: Identify when the condition is preceded by a ! or has a negative comparison
     textChunks.forEach(function(textChunk) {
@@ -59,17 +62,20 @@ define(function(require, exports, module) {
       if(textChunk instanceof Expression) {
         self.conditions.push(textChunk);
       } else {
-        conditionChunks = textChunk.split(matchAndOr);
+        conditionChunks = textChunk.split(matchAndOrXor);
         
         conditionChunks.forEach(function(condition) {
           // Determine if an AND operator or an OR operator was found.
           // If so, store which was found and then remove it.
           if((leadingAndMatch = condition.match(captureLeadingAnd)) !== null) {
-            self.operators.push(new Operator(true)); // AND operator
+            self.operators.push(new Operator(Operator.TYPE_AND));
             condition = condition.substring(leadingAndMatch[0].length);
           } else if((leadingOrMatch = condition.match(captureLeadingOr)) !== null) {
-            self.operators.push(new Operator(false)); // OR operator
+            self.operators.push(new Operator(Operator.TYPE_OR));
             condition = condition.substring(leadingOrMatch[0].length);
+          } else if((leadingXorMatch = condition.match(captureLeadingXor)) !== null) {
+            self.operators.push(new Operator(Operator.TYPE_XOR));
+            condition = condition.substring(leadingXorMatch[0].length);
           }
           
           // Store anything that's not still empty.
@@ -91,6 +97,7 @@ define(function(require, exports, module) {
         // There's only one condition, so it must be true
         self.truePaths.push([{ condition: self.conditions[0], result: true }]);
       } else {
+        
         if(self.operators[0].isAnd()) {
           
           // Create one truePath where every condition is true
@@ -100,17 +107,21 @@ define(function(require, exports, module) {
           });
           self.truePaths.push(truePath);
           
-        } else {
+        } else if(self.operators[0].isOr()) {
           
           // Create a separate truePath for each Condition where one is true
           self.conditions.forEach(function(unused, i1) {
             truePath = [];
             self.conditions.forEach(function(e, i2) {
-              truePath.push({ condition: e, result: (i1 === i2) });
+              truePath.push({ condition: e, result: (i1 === i2) ? true : null });
             });
             self.truePaths.push(truePath);
           });
           
+        } else { // XOR operator
+        
+          // TODO: Calculate the truePaths for XOR
+        
         }
       }
     }
@@ -131,7 +142,7 @@ define(function(require, exports, module) {
     };
     
     var expandedTruePaths = Utils.cloneDeep(self.truePaths),
-        i, k, subTruePaths, falseSubTruePath, tempTruePath;
+        i, k, subTruePaths, nullSubTruePath, tempTruePath;
     
     // Iterate through the first truePath, as a template of the conditions and sub-expressions.
     // Step through it backwards so expanded paths will not throw off the upcoming indicies.
@@ -142,12 +153,12 @@ define(function(require, exports, module) {
         // Cross-apply the child true paths to the one for this Expression
         for(k = expandedTruePaths.length - 1; k >= 0; k--) {
           
-          if(expandedTruePaths[k][i].result === false) {
-            // If the sub-expression doesn't need to be true, create a version where all conditions are false
-            falseSubTruePath = Utils.cloneDeep(subTruePaths[0]);
-            falseSubTruePath.forEach(function(e) { e.result = false; } );
+          if(expandedTruePaths[k][i].result !== true) {
+            // If the sub-expression doesn't need to be true, create a version where all conditions are null
+            nullSubTruePath = Utils.cloneDeep(subTruePaths[0]);
+            nullSubTruePath.forEach(function(e) { e.result = null; } );
             // Insert these conditions once, no matter how many true paths the sub-Expression contains
-            tempTruePath = replaceSubExpressionWithTruePath(expandedTruePaths[k], falseSubTruePath, i);
+            tempTruePath = replaceSubExpressionWithTruePath(expandedTruePaths[k], nullSubTruePath, i);
             // Append the new true path after the existing one. Because k counts down, it won't be processed.
             expandedTruePaths.splice(k + 1, 0, tempTruePath);
           } else {
