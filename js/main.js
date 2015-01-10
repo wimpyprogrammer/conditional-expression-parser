@@ -104,6 +104,12 @@ define(function(require, exports, module) {
         'if (a || (b && c) )' + "\r\n"
       ).change();
     });
+    
+    $example6.click(function() {
+      $input.val(
+        'a ^ b'
+      ).change();
+    });
   });
 
 });
