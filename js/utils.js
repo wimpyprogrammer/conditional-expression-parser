@@ -109,10 +109,8 @@ define(function(require, exports, module) {
           return;
       }
       
-      // For custom objects, handle the clone manually so we can set the prototype
-      var clonedObject = lodash.clone(valueToClone);
-      clonedObject.prototype = valueToClone;
-      return clonedObject;
+      // For custom objects, handle the clone manually so the prototype is properly set
+      return Object.create(valueToClone);
     };
     
     return lodash.cloneDeep(value, cloneCallback);
