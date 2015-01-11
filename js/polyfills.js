@@ -122,6 +122,7 @@ if (!Array.prototype.filter) {
     return res;
   };
 }
+
 // Object.create from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/create#Polyfill
 if (typeof Object.create != 'function') {
   Object.create = (function() {
