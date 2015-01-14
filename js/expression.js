@@ -22,11 +22,34 @@ define(function(require, exports, module) {
     return evalPaths;
   }
   
+  // Generate an eval path with the specified result for all conditions
+  function generateEvalPathsUniformResult(conditions, result) {
+    var evalPaths = [[]];
+    conditions.forEach(function(c) {
+      evalPaths[0].push({ condition: c, result: result });
+    });
+    return evalPaths;
+  }
+  
+  // Generate eval paths where each condition has the specified result
+  function generateEvalPathsIndividualResult(conditions, result) {
+    var evalPaths = [], evalPath;
+    conditions.forEach(function(unused, i1) {
+      evalPath = [];
+      conditions.forEach(function(c, i2) {
+        evalPath.push({ condition: c, result: (i1 === i2) ? result : null });
+      });
+      evalPaths.push(evalPath);
+    });
+    return evalPaths;
+  }
+  
   function Expression(text) {
     var self = this;
     self.operators = [/*Operator*/];
     self.conditions = [/*Condition*/];
     self.truePaths = [/*{ condition, result }*/];
+    self.falsePaths = [/*{ condition, result }*/];
     
     // trim surrounding space and parenthesis pairs
     var textToParse = Utils.trimParenthesisPairs(text);
@@ -108,7 +131,6 @@ define(function(require, exports, module) {
     self.hasMixedOperators = Utils.hasMixedOperators(self.operators);
     
     // Calculate the combinations of Conditions that will resolve to true
-    var truePath;
     if(!self.hasMixedOperators) { // TODO: Can we calculate when operators are mixed?
       if(self.conditions.length === 1) {
         // There's only one condition, so it must be true
@@ -118,22 +140,16 @@ define(function(require, exports, module) {
         if(self.operators[0].isAnd()) {
           
           // Create one truePath where every condition is true
-          truePath = [];
-          self.conditions.forEach(function(e) {
-            truePath.push({ condition: e, result: true });
-          });
-          self.truePaths.push(truePath);
+          self.truePaths = generateEvalPathsUniformResult(self.conditions, true);
+          // Create a separate falsePath for each Condition where one is false
+          self.falsePaths = generateEvalPathsIndividualResult(self.conditions, false);
           
         } else if(self.operators[0].isOr()) {
           
           // Create a separate truePath for each Condition where one is true
-          self.conditions.forEach(function(unused, i1) {
-            truePath = [];
-            self.conditions.forEach(function(e, i2) {
-              truePath.push({ condition: e, result: (i1 === i2) ? true : null });
-            });
-            self.truePaths.push(truePath);
-          });
+          self.truePaths = generateEvalPathsIndividualResult(self.conditions, false);
+          // Create one falsePath where every condition is false
+          self.falsePaths = generateEvalPathsUniformResult(self.conditions, false);
           
         } else { // XOR operator
           
@@ -144,8 +160,12 @@ define(function(require, exports, module) {
               },
               allEvalPaths = calculateAllEvalPaths(self.conditions);
           
-          allEvalPaths.filter(hasOddTrues).forEach(function(truePath) {
-            self.truePaths.push(truePath);
+          allEvalPaths.forEach(function(evalPath) {
+            if(hasOddTrues(evalPath)) {
+              self.truePaths.push(evalPath);
+            } else {
+              self.falsePaths.push(evalPath);
+            }
           });
           
         }
