@@ -38,7 +38,7 @@ define(function(require, exports, module) {
   function printCells(/*Expression*/ expression, newDepth) {
     var cells = '',
         depth = newDepth || 0,
-        expandedTruePaths = expression.expandTruePaths(),
+        expandedTruePaths = expression.truePaths.expand(),
         displayValue;
     
     expandedTruePaths.forEach(function(expandedTruePath) {
