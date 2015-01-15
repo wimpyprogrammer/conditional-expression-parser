@@ -90,8 +90,8 @@ define(function(require, exports, module) {
     
     self.hasMixedOperators = Utils.hasMixedOperators(self.operators);
     
-    self.truePaths = new EvalTree.EvalTree(self, true);
-    self.falsePaths = new EvalTree.EvalTree(self, false);
+    self.truePaths = self.hasMixedOperators ? null : new EvalTree.EvalTree(self, true);
+    self.falsePaths = self.hasMixedOperators ? null : new EvalTree.EvalTree(self, false);
     
     return this;
   }
