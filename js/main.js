@@ -109,7 +109,7 @@ define(function(require, exports, module) {
     
     $example6.click(function() {
       $input.val(
-        'a ^ b'
+        'a ^ (b ^ c)'
       ).change();
     });
   });
