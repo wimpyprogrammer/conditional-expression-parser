@@ -100,6 +100,13 @@ define(function(require, exports, module) {
     return treeType ? this.truePaths : this.falsePaths;
   };
   
+  Expression.prototype.hasMixedOperatorsDeep = function() {
+    var self = this;
+    return self.hasMixedOperators || self.conditions.some(function(c) {
+      return (c instanceof Expression) && c.hasMixedOperatorsDeep();
+    });
+  };
+  
   /*Expression.prototype.toArray = function() {
     var toArray = [],
         i;
