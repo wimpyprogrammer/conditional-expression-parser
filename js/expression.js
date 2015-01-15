@@ -72,20 +72,20 @@ define(function(require, exports, module) {
           // Determine if an AND operator or an OR operator was found.
           // If so, store which was found and then remove it.
           if((leadingAndMatch = condition.match(captureLeadingAnd)) !== null) {
-            self.operators.push(new Operator(Operator.TYPE_AND));
+            self.operators.push(new Operator.Operator(Operator.Operator.TYPE_AND));
             condition = condition.substring(leadingAndMatch[0].length);
           } else if((leadingOrMatch = condition.match(captureLeadingOr)) !== null) {
-            self.operators.push(new Operator(Operator.TYPE_OR));
+            self.operators.push(new Operator.Operator(Operator.Operator.TYPE_OR));
             condition = condition.substring(leadingOrMatch[0].length);
           } else if((leadingXorMatch = condition.match(captureLeadingXor)) !== null) {
-            self.operators.push(new Operator(Operator.TYPE_XOR));
+            self.operators.push(new Operator.Operator(Operator.Operator.TYPE_XOR));
             condition = condition.substring(leadingXorMatch[0].length);
           }
           
           // Store anything that's not still empty.
           condition = condition.trim();
           if(condition !== '') {
-            self.conditions.push(new Condition(condition));
+            self.conditions.push(new Condition.Condition(condition));
           }
         });
         
@@ -94,8 +94,8 @@ define(function(require, exports, module) {
     
     self.hasMixedOperators = Utils.hasMixedOperators(self.operators);
     
-    self.truePaths = new EvalTree(self, true);
-    self.falsePaths = new EvalTree(self, false);
+    self.truePaths = new EvalTree.EvalTree(self, true);
+    self.falsePaths = new EvalTree.EvalTree(self, false);
     
     return this;
   }
@@ -112,6 +112,6 @@ define(function(require, exports, module) {
     return toArray;
   };*/
   
-  return Expression;
+  exports.Expression = Expression;
 
 });

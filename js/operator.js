@@ -56,6 +56,6 @@ define(function(require, exports, module) {
     return this._type === Operator.TYPE_XOR;
   };
   
-  return Operator;
+  exports.Operator = Operator;
 
 });

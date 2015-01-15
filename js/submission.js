@@ -20,11 +20,11 @@ define(function(require, exports, module) {
     // capture the conditional text
     textToParse = captureExpression.exec(textToParse)[1];
     
-    this.expression = new Expression(textToParse);
+    this.expression = new Expression.Expression(textToParse);
     
     return this;
   }
   
-  return Submission;
+  exports.Submission = Submission;
 
 });

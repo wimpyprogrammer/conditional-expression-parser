@@ -119,7 +119,7 @@ define(function(require, exports, module) {
     // Iterate through the first evalPath, as a template of the conditions and sub-expressions.
     // Step through it backwards so expanded paths will not throw off the upcoming indicies.
     for(i = self.evalPaths[0].length - 1; i >= 0; i--) {
-      if(self.evalPaths[0][i].condition instanceof Expression) {
+      if(self.evalPaths[0][i].condition instanceof Expression.Expression) {
         subEvalPaths = self.evalPaths[0][i].condition.truePaths.expand(); // TODO: Fix this to use truePaths.expand()
         
         // Cross-apply the child true paths to the one for this Expression
@@ -153,6 +153,6 @@ define(function(require, exports, module) {
     return expandedEvalPaths;
   };
   
-  return EvalTree;
+  exports.EvalTree = EvalTree;
 
 });

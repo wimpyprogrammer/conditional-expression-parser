@@ -16,7 +16,7 @@ define(function(require, exports, module) {
       headingClass, operatorClass;
     
     expression.conditions.forEach(function(e, i, arr) {
-      if(e instanceof Expression) {
+      if(e instanceof Expression.Expression) {
         // Recursively print sub-expressions
         headings += printHeadings(e, depth + 1);
       } else {
@@ -65,7 +65,7 @@ define(function(require, exports, module) {
         $example6 = $('#example6');
     
     $input.change(function() {
-      var expression = (new Submission($input.val())).expression;
+      var expression = (new Submission.Submission($input.val())).expression;
       
       var output = '<table>' +
           '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
