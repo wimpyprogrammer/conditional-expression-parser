@@ -65,12 +65,17 @@ define(function(require, exports, module) {
         $example6 = $('#example6');
     
     $input.change(function() {
-      var expression = (new Submission.Submission($input.val())).expression;
+      var expression = (new Submission.Submission($input.val())).expression,
+          output;
       
-      var output = '<table>' +
+      if(expression.hasMixedOperatorsDeep()) {
+        output = 'Unable to calculate mixed operators';
+      } else {
+        output = '<table>' +
           '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
           '<tbody>' + printCells(expression) + '<\/tbody>' +
           '<\/table>';
+      }
       
       $output.html(output);
     });

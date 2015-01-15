@@ -51,50 +51,53 @@ define(function(require, exports, module) {
     var self = this,
         treeType = Boolean(_treeType);
     self.evalPaths = [/*{ condition, result }*/];
+    
+    if(expression.hasMixedOperators) {
+      // TODO: Can we calculate when operators are mixed?
+      throw 'Expressions with mixed operators cannot be evaluated';
+    }
   
     // Calculate the combinations of Conditions that will resolve to true
-    if(!expression.hasMixedOperators) { // TODO: Can we calculate when operators are mixed?
-      if(expression.conditions.length === 1) {
-        // There's only one condition, so it must match treeType
-        self.evalPaths.push([{ condition: expression.conditions[0], result: treeType }]);
-      } else {
+    if(expression.conditions.length === 1) {
+      // There's only one condition, so it must match treeType
+      self.evalPaths.push([{ condition: expression.conditions[0], result: treeType }]);
+    } else {
+      
+      if(expression.operators[0].isAnd()) {
         
-        if(expression.operators[0].isAnd()) {
-          
-          if(treeType === true) {
-            // Create one evalPath where every condition is true
-            self.evalPaths = generateEvalPathsUniformResult(expression.conditions, true);
-          } else {
-            // Create a separate falsePath for each Condition where one is false
-            self.evalPaths = generateEvalPathsIndividualResult(expression.conditions, false);
-          }
-          
-        } else if(expression.operators[0].isOr()) {
-          
-          if(treeType === true) {
-            // Create a separate evalPath for each Condition where one is true
-            self.evalPaths = generateEvalPathsIndividualResult(expression.conditions, true);
-          } else {
-            // Create one falsePath where every condition is false
-            self.evalPaths = generateEvalPathsUniformResult(expression.conditions, false);
-          }
-          
-        } else { // XOR operator
-          
-          // A XOR expression is true if it has an odd number of true conditions
-          var isTrueCondition = function(c) { return c.result; },
-              hasOddTrues = function(ep) {
-                return ep.filter(isTrueCondition).length % 2 === 1;
-              },
-              allEvalPaths = calculateAllEvalPaths(expression.conditions);
-          
-          allEvalPaths.forEach(function(evalPath) {
-            if(hasOddTrues(evalPath) ^ treeType === false) {
-              self.evalPaths.push(evalPath);
-            }
-          });
-          
+        if(treeType === true) {
+          // Create one evalPath where every condition is true
+          self.evalPaths = generateEvalPathsUniformResult(expression.conditions, true);
+        } else {
+          // Create a separate falsePath for each Condition where one is false
+          self.evalPaths = generateEvalPathsIndividualResult(expression.conditions, false);
         }
+        
+      } else if(expression.operators[0].isOr()) {
+        
+        if(treeType === true) {
+          // Create a separate evalPath for each Condition where one is true
+          self.evalPaths = generateEvalPathsIndividualResult(expression.conditions, true);
+        } else {
+          // Create one falsePath where every condition is false
+          self.evalPaths = generateEvalPathsUniformResult(expression.conditions, false);
+        }
+        
+      } else { // XOR operator
+        
+        // A XOR expression is true if it has an odd number of true conditions
+        var isTrueCondition = function(c) { return c.result; },
+            hasOddTrues = function(ep) {
+              return ep.filter(isTrueCondition).length % 2 === 1;
+            },
+            allEvalPaths = calculateAllEvalPaths(expression.conditions);
+        
+        allEvalPaths.forEach(function(evalPath) {
+          if(hasOddTrues(evalPath) ^ treeType === false) {
+            self.evalPaths.push(evalPath);
+          }
+        });
+        
       }
     }
     

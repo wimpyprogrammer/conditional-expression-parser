@@ -90,14 +90,21 @@ define(function(require, exports, module) {
     
     self.hasMixedOperators = Utils.hasMixedOperators(self.operators);
     
-    self.truePaths = new EvalTree.EvalTree(self, true);
-    self.falsePaths = new EvalTree.EvalTree(self, false);
+    self.truePaths = self.hasMixedOperators ? null : new EvalTree.EvalTree(self, true);
+    self.falsePaths = self.hasMixedOperators ? null : new EvalTree.EvalTree(self, false);
     
     return this;
   }
   
   Expression.prototype.getEvalPaths = function(treeType) {
     return treeType ? this.truePaths : this.falsePaths;
+  };
+  
+  Expression.prototype.hasMixedOperatorsDeep = function() {
+    var self = this;
+    return self.hasMixedOperators || self.conditions.some(function(c) {
+      return (c instanceof Expression) && c.hasMixedOperatorsDeep();
+    });
   };
   
   /*Expression.prototype.toArray = function() {
