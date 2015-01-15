@@ -11,6 +11,6 @@ define(function(require, exports, module) {
     return this.text;
   };
   
-  return Condition;
+  exports.Condition = Condition;
 
 });

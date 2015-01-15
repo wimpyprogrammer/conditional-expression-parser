@@ -16,7 +16,7 @@ define(function(require, exports, module) {
       headingClass, operatorClass;
     
     expression.conditions.forEach(function(e, i, arr) {
-      if(e instanceof Expression) {
+      if(e instanceof Expression.Expression) {
         // Recursively print sub-expressions
         headings += printHeadings(e, depth + 1);
       } else {
@@ -38,13 +38,15 @@ define(function(require, exports, module) {
   function printCells(/*Expression*/ expression, newDepth) {
     var cells = '',
         depth = newDepth || 0,
-        expandedTruePaths = expression.expandTruePaths();
+        expandedTruePaths = expression.truePaths.expand(),
+        displayValue;
     
     expandedTruePaths.forEach(function(expandedTruePath) {
       cells += '<tr>';
       expandedTruePath.forEach(function(truePathCondition, i) {
-        if(i !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; } // 
-        cells += '<td class="condition">' + (truePathCondition.result ? 'true' : '') + '<\/td>';
+        if(i !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; }
+        displayValue = (truePathCondition.result === null) ? '' : truePathCondition.result;
+        cells += '<td class="condition">' + displayValue + '<\/td>';
       });
       cells += '<\/tr>';
     });
@@ -63,7 +65,7 @@ define(function(require, exports, module) {
         $example6 = $('#example6');
     
     $input.change(function() {
-      var expression = (new Submission($input.val())).expression;
+      var expression = (new Submission.Submission($input.val())).expression;
       
       var output = '<table>' +
           '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
@@ -102,6 +104,12 @@ define(function(require, exports, module) {
     $example5.click(function() {
       $input.val(
         'if (a || (b && c) )' + "\r\n"
+      ).change();
+    });
+    
+    $example6.click(function() {
+      $input.val(
+        'a ^ (b ^ c)'
       ).change();
     });
   });
