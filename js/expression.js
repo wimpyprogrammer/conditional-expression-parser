@@ -11,10 +11,6 @@ define(function(require, exports, module) {
     self.operators = [/*Operator*/];
     self.conditions = [/*Condition*/];
     
-    // EvalTree objects
-    self.truePaths = null;
-    self.falsePaths = null;
-    
     // trim surrounding space and parenthesis pairs
     var textToParse = Utils.trimParenthesisPairs(text);
     var topLevelParenthesis = Utils.findTopLevelParenthesis(textToParse);
