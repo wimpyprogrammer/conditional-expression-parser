@@ -56,7 +56,7 @@ define(function(require, exports, module) {
     if(!expression.hasMixedOperators) { // TODO: Can we calculate when operators are mixed?
       if(expression.conditions.length === 1) {
         // There's only one condition, so it must match treeType
-        self.evalPaths.push([{ condition: self.conditions[0], result: treeType }]);
+        self.evalPaths.push([{ condition: expression.conditions[0], result: treeType }]);
       } else {
         
         if(expression.operators[0].isAnd()) {
@@ -120,27 +120,33 @@ define(function(require, exports, module) {
     // Step through it backwards so expanded paths will not throw off the upcoming indicies.
     for(i = self.evalPaths[0].length - 1; i >= 0; i--) {
       if(self.evalPaths[0][i].condition instanceof Expression.Expression) {
-        subEvalPaths = self.evalPaths[0][i].condition.truePaths.expand(); // TODO: Fix this to use truePaths.expand()
-        
-        // Cross-apply the child true paths to the one for this Expression
         for(k = expandedEvalPaths.length - 1; k >= 0; k--) {
           
-          if(expandedEvalPaths[k][i].result !== true) {
-            // If the sub-expression doesn't need to be true, create a version where all conditions are null
+          if(expandedEvalPaths[k][i].result === null) {
+            
+            // Start with the expanded truePaths as a template for all of the Conditions
+            subEvalPaths = self.evalPaths[0][i].condition.truePaths.expand();
+            // Create a single evalPath where all conditions are null
             nullSubEvalPath = Utils.cloneDeep(subEvalPaths[0]);
             nullSubEvalPath.forEach(function(e) { e.result = null; } );
             // Insert these conditions once, no matter how many true paths the sub-Expression contains
             tempEvalPath = replaceSubExpressionWithEvalPath(expandedEvalPaths[k], nullSubEvalPath, i);
             // Append the new true path after the existing one. Because k counts down, it won't be processed.
             expandedEvalPaths.splice(k + 1, 0, tempEvalPath);
+            
           } else {
-            // The sub-expression needs to be true, so insert each of its true paths
+            
+            // Cross-apply the child eval paths to the one for this Expression
+            // Retrieve the Expression's truePaths or falsePaths, depending on how the Expression should evaluate
+            subEvalPaths = expandedEvalPaths[k][i].condition.getEvalPaths(expandedEvalPaths[k][i].result).expand();
+            // Insert the expanded conditions
             subEvalPaths.forEach(function(e) {
-              // Update this true path to replace the sub-expression with its expanded conditions
+              // Update this eval path to replace the sub-expression with its expanded conditions
               tempEvalPath = replaceSubExpressionWithEvalPath(expandedEvalPaths[k], e, i);
-              // Append the new true path after the existing one. Because k counts down, it won't be processed.
+              // Append the new eval path after the existing one. Because k counts down, it won't be processed.
               expandedEvalPaths.splice(k + 1, 0, tempEvalPath);
             });
+            
           }
           
           // Remove the sub-expression, now that it's been replaced above by the expansion(s)

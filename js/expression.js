@@ -96,6 +96,10 @@ define(function(require, exports, module) {
     return this;
   }
   
+  Expression.prototype.getEvalPaths = function(treeType) {
+    return treeType ? this.truePaths : this.falsePaths;
+  };
+  
   /*Expression.prototype.toArray = function() {
     var toArray = [],
         i;
