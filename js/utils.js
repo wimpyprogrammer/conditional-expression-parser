@@ -20,7 +20,7 @@ define(function(require, exports, module) {
       // To determine if the parenthesis is a sub-expression or a function call, look at the preceding characters
       var precedingCharacters = string.substring(0, index + 1),
           matchConditional = new RegExp(
-            '(?:' + exports.tokensAndOrXor.join('|') + ')\\s*\\($'
+            '(?:^|' + exports.tokensAndOrXor.join('|') + ')\\s*\\($'
           , 'i');
       return !matchConditional.test(precedingCharacters);
     };
