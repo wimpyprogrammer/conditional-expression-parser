@@ -1,26 +1,96 @@
-<html>
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title>Conditional Parser</title>
-		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
+		<style>
+			body {
+				padding-top: 50px;
+				padding-bottom: 20px;
+			}
+		</style>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap-theme.min.css">
+		<link rel="stylesheet" href="css/main.css">
+
+		<script src="js/vendor/modernizr-2.6.2.min.js"></script>
 	</head>
 	<body>
-		<textarea id="input"></textarea>
-		<a href="javascript:void(0)" id="example1">1</a>
-		<a href="javascript:void(0)" id="example2">2</a>
-		<a href="javascript:void(0)" id="example3">3</a>
-		<a href="javascript:void(0)" id="example4">4</a>
-		<a href="javascript:void(0)" id="example5">5</a>
-		<a href="javascript:void(0)" id="example6">6</a>
+		<!-- Google Tag Manager -->
+		<noscript>
+			<iframe src="//www.googletagmanager.com/ns.html?id=GTM-WXV8ZH" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+		</noscript>
+		<script>(function(w,d,s,l,i){
+			w[l]=w[l]||[];
+			w[l].push({
+				'gtm.start':new Date().getTime(),event:'gtm.js'
+			});
+			var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';
+			j.async=true;
+			j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;
+			f.parentNode.insertBefore(j,f);
+		})(window,document,'script','dataLayer','GTM-WXV8ZH');</script>
+		<!-- End Google Tag Manager -->
+
+		<!--[if lt IE 7]>
+			<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<div class="navbar-header">
+					<span class="navbar-brand">Conditional Parser</span>
+				</div>
+		  </div>
+		</nav>
+
+		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="jumbotron">
+			<div class="container">
+				<textarea id="input"></textarea>
+				<a href="javascript:void(0)" id="example1">1</a>
+				<a href="javascript:void(0)" id="example2">2</a>
+				<a href="javascript:void(0)" id="example3">3</a>
+				<a href="javascript:void(0)" id="example4">4</a>
+				<a href="javascript:void(0)" id="example5">5</a>
+				<a href="javascript:void(0)" id="example6">6</a>
+			</div>
+		</div>
+
+		<div class="container">
+			<div id="output" class="row"></div>
+
+			<hr>
+
+			<footer>
+				<p>&copy; WimpyProgrammer.com 2015</p>
+			</footer>
+		</div> <!-- /container -->
 		
-		<div id="output"></div>
-		
-		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>
+		<script>window.define || document.write('<script src="js/vendor/require-2.1.15.min.js"><\/script>')</script>
 		<script type="text/javascript">
 			require.config({
 				baseUrl: 'js/',
 				paths: {
-					'jquery': 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min',
-					'lodash': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min'
+					'jquery': [
+						'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min',
+						'vendor/jquery-2.1.3.min'
+					],
+					'lodash': [
+						'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min',
+						'vendor/lodash-2.4.1.min'
+					],
+					'bootstrap': [
+						'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min',
+						'vendor/bootstrap-3.3.1.min'
+					]
 				},
 				shim: {
 					'underscore': {
@@ -31,7 +101,7 @@
 					}
 			  }
 			});
-			require(['main']);
+			require(['main', 'plugins']);
 		</script>
 	</body>
 </html>
