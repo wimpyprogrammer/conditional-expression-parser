@@ -93,7 +93,6 @@ define(function(require, exports, module) {
   exports.removeIgnoredText = function(string) {
     var inSingleQuote = false,
         inDoubleQuote = false,
-        conditionalDepth = 0,
         functionCallDepth = 0,
         ignoredText = [],
         i, iSingleQuoteStart, iDoubleQuoteStart, iFunctionCallStart;

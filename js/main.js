@@ -36,9 +36,8 @@ define(function(require, exports, module) {
     return headings;
   }
   
-  function printCells(/*Expression*/ expression, newDepth) {
+  function printCells(/*Expression*/ expression) {
     var cells = '',
-        depth = newDepth || 0,
         expandedTruePaths = expression.truePaths.expand(),
         displayValue;
     
@@ -98,7 +97,7 @@ define(function(require, exports, module) {
           }
           $input.change();
         },
-        onEnd: function(tour) {
+        onEnd: function() {
           hasStarted = false;
           $input.val(userInput).change();
         }
