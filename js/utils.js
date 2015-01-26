@@ -13,18 +13,20 @@ define(function(require, exports, module) {
   exports.tokensIgnoreLeading = [ '\\s', 'if', 'else', 'elseif', '\\}' ];
   exports.tokensIgnoreTrailing = [ '\\s', '\\{', ';' ];
   
+  function isEscaped(string, index) {
+    return (index > 0 && string[index - 1] === '\\' && !isEscaped(string, index - 1));
+  }
+  
+  function isFunctionCall(string, index) {
+    // To determine if the parenthesis is a sub-expression or a function call, look at the preceding characters
+    var precedingCharacters = string.substring(0, index + 1),
+        matchConditional = new RegExp(
+          '(?:^|' + exports.tokensAndOrXor.join('|') + ')\\s*\\($'
+        , 'i');
+    return !matchConditional.test(precedingCharacters);
+  }
+  
   exports.findTopLevelParenthesis = function(string) {
-    var isEscaped = function isEscaped(index) {
-      return (index > 0 && string[index - 1] === '\\' && !isEscaped(index - 1));
-    }, isFunctionCall = function(index) {
-      // To determine if the parenthesis is a sub-expression or a function call, look at the preceding characters
-      var precedingCharacters = string.substring(0, index + 1),
-          matchConditional = new RegExp(
-            '(?:^|' + exports.tokensAndOrXor.join('|') + ')\\s*\\($'
-          , 'i');
-      return !matchConditional.test(precedingCharacters);
-    };
-    
     var inSingleQuote = false,
       inDoubleQuote = false,
       conditionalDepth = 0,
@@ -34,7 +36,7 @@ define(function(require, exports, module) {
     
     for(i = 0; i < string.length; i++) {
       // If the character is escaped, don't mistake it as syntax
-      if(isEscaped(i)) { continue; }
+      if(isEscaped(string, i)) { continue; }
       
       if(inSingleQuote && string[i] === "'") { // found the closing single quote
         inSingleQuote = false;
@@ -54,7 +56,7 @@ define(function(require, exports, module) {
           }
         }
       } else if(string[i] === '(') { // found an opening parenthesis
-        if(functionCallDepth > 0 || isFunctionCall(i)) { // ignore parenthesis to start or within a function call
+        if(functionCallDepth > 0 || isFunctionCall(string, i)) { // ignore parenthesis to start or within a function call
           functionCallDepth++;
         } else {
           if(conditionalDepth === 0) { // found top-level parenthesis
