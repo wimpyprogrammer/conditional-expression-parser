@@ -12,10 +12,9 @@ define(function(require, exports, module) {
     self.conditions = [/*Condition*/];
     
     // trim surrounding space and parenthesis pairs
-    var textToParse = Utils.trimParenthesisPairs(text);
-    var topLevelParenthesis = Utils.findTopLevelParenthesis(textToParse);
-    
-    var textChunks = [],
+    var textToParse = Utils.trimParenthesisPairs(text),
+        topLevelParenthesis = Utils.findTopLevelParenthesis(textToParse),
+        textChunks = [],
         lastPosition = 0;
     
     // Break the text into sub-expressions and top-level expressions
