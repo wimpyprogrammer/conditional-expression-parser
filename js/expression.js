@@ -54,7 +54,7 @@ define(function(require, exports, module) {
         captureLeadingXor = new RegExp(
             '^(' + Utils.tokensXor.join('|') + ')'
         , 'ig'),
-        leadingAndMatch, leadingOrMatch, leadingXorMatch;
+        leadingAndMatch, leadingOrMatch, leadingXorMatch, retVal, ignoredText;
     
     // TODO: Identify when the condition is preceded by a ! or has a negative comparison
     textChunks.forEach(function(textChunk) {
@@ -62,6 +62,12 @@ define(function(require, exports, module) {
       if(textChunk instanceof Expression) {
         self.conditions.push(textChunk);
       } else {
+        // Remove all the text that should be ignored: the contents of function calls and strings
+        // Otherwise the split() could match operators in those strings
+        retVal = Utils.removeIgnoredText(textChunk);
+        textChunk = retVal[0];
+        ignoredText = retVal[1];
+        
         conditionChunks = textChunk.split(matchAndOrXor);
         
         conditionChunks.forEach(function(condition) {
@@ -81,6 +87,8 @@ define(function(require, exports, module) {
           // Store anything that's not still empty.
           condition = condition.trim();
           if(condition !== '') {
+            // Restore any text that was ignored above
+            condition = Utils.restoreIgnoredText(condition, ignoredText);
             self.conditions.push(new Condition.Condition(condition));
           }
         });
