@@ -28,11 +28,11 @@ define(function(require, exports, module) {
   
   exports.findTopLevelParenthesis = function(string) {
     var inSingleQuote = false,
-      inDoubleQuote = false,
-      conditionalDepth = 0,
-      functionCallDepth = 0,
-      parenthesisPairs = [/*{ start, end }*/],
-      i, iParenthesisStart;
+        inDoubleQuote = false,
+        conditionalDepth = 0,
+        functionCallDepth = 0,
+        parenthesisPairs = [/*{ start, end }*/],
+        i, iParenthesisStart;
     
     for(i = 0; i < string.length; i++) {
       // If the character is escaped, don't mistake it as syntax
@@ -93,7 +93,6 @@ define(function(require, exports, module) {
   exports.removeIgnoredText = function(string) {
     var inSingleQuote = false,
         inDoubleQuote = false,
-        conditionalDepth = 0,
         functionCallDepth = 0,
         ignoredText = [],
         i, iSingleQuoteStart, iDoubleQuoteStart, iFunctionCallStart;

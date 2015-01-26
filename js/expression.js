@@ -12,10 +12,9 @@ define(function(require, exports, module) {
     self.conditions = [/*Condition*/];
     
     // trim surrounding space and parenthesis pairs
-    var textToParse = Utils.trimParenthesisPairs(text);
-    var topLevelParenthesis = Utils.findTopLevelParenthesis(textToParse);
-    
-    var textChunks = [],
+    var textToParse = Utils.trimParenthesisPairs(text),
+        topLevelParenthesis = Utils.findTopLevelParenthesis(textToParse),
+        textChunks = [],
         lastPosition = 0;
     
     // Break the text into sub-expressions and top-level expressions
@@ -43,16 +42,16 @@ define(function(require, exports, module) {
     
     var conditionChunks = [],
         matchAndOrXor = new RegExp(
-            '(\\s|\\b)(?=' + Utils.tokensAndOrXor.join('|') + ')'
+          '(\\s|\\b)(?=' + Utils.tokensAndOrXor.join('|') + ')'
         , 'ig'),
         captureLeadingAnd = new RegExp(
-            '^(' + Utils.tokensAnd.join('|') + ')'
+          '^(' + Utils.tokensAnd.join('|') + ')'
         , 'ig'),
         captureLeadingOr = new RegExp(
-            '^(' + Utils.tokensOr.join('|') + ')'
+          '^(' + Utils.tokensOr.join('|') + ')'
         , 'ig'),
         captureLeadingXor = new RegExp(
-            '^(' + Utils.tokensXor.join('|') + ')'
+          '^(' + Utils.tokensXor.join('|') + ')'
         , 'ig'),
         leadingAndMatch, leadingOrMatch, leadingXorMatch, retVal, ignoredText;
     
@@ -114,18 +113,6 @@ define(function(require, exports, module) {
       return (c instanceof Expression) && c.hasMixedOperatorsDeep();
     });
   };
-  
-  /*Expression.prototype.toArray = function() {
-    var toArray = [],
-        i;
-    for(i = 0; i < this.conditions.length; i++) {
-      toArray.push(this.conditions[i]);
-      if(i < this.operators.length) {
-        toArray.push(this.operators[i]);
-      }
-    }
-    return toArray;
-  };*/
   
   exports.Expression = Expression;
 
