@@ -56,31 +56,32 @@ define(function(require, exports, module) {
 
   $(function() {
     var $input = $('#input'),
-        $output = $('#output'),
+        $alertMixedOperators = $('.js-alert-mixed-operators'),
+        $truthTable = $('.js-truth-table'),
         $startTutorial = $('.js-tutorial-start');
     
     $input.change(function() {
       var input = $input.val(),
           expression, output;
       
-      if(input.trim() === '') {
-        output = '';
-      } else {
+      $alertMixedOperators.addClass('hide');
+      $truthTable.addClass('hide');
+      
+      if(input.trim() !== '') {
       
         expression = (new Submission.Submission(input)).expression;
         
         if(expression.hasMixedOperatorsDeep()) {
-          output = 'Unable to calculate mixed operators';
+          $alertMixedOperators.removeClass('hide');
         } else {
-          output = '<table>' +
-            '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
-            '<tbody>' + printCells(expression) + '<\/tbody>' +
-            '<\/table>';
+          
+          $truthTable.removeClass('hide');
+          $truthTable.find('thead').html('<tr>' + printHeadings(expression) + '<\/tr>');
+          $truthTable.find('tbody').html(printCells(expression));
+          
         }
         
       }
-      
-      $output.html(output);
     });
     
     $startTutorial.click(function() {
