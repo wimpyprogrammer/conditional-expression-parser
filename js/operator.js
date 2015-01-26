@@ -4,15 +4,14 @@ define(function(require, exports, module) {
   function Operator(type) {
     
     switch(type.toString().toUpperCase()) {
-      case Operator.TYPE_AND:
-      default:
-        this._type = Operator.TYPE_AND;
-        break;
       case Operator.TYPE_OR:
         this._type = Operator.TYPE_OR;
         break;
       case Operator.TYPE_XOR:
         this._type = Operator.TYPE_XOR;
+        break;
+      default:
+        this._type = Operator.TYPE_AND;
         break;
     }
     
