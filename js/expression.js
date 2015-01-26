@@ -43,16 +43,16 @@ define(function(require, exports, module) {
     
     var conditionChunks = [],
         matchAndOrXor = new RegExp(
-            '(\\s|\\b)(?=' + Utils.tokensAndOrXor.join('|') + ')'
+          '(\\s|\\b)(?=' + Utils.tokensAndOrXor.join('|') + ')'
         , 'ig'),
         captureLeadingAnd = new RegExp(
-            '^(' + Utils.tokensAnd.join('|') + ')'
+          '^(' + Utils.tokensAnd.join('|') + ')'
         , 'ig'),
         captureLeadingOr = new RegExp(
-            '^(' + Utils.tokensOr.join('|') + ')'
+          '^(' + Utils.tokensOr.join('|') + ')'
         , 'ig'),
         captureLeadingXor = new RegExp(
-            '^(' + Utils.tokensXor.join('|') + ')'
+          '^(' + Utils.tokensXor.join('|') + ')'
         , 'ig'),
         leadingAndMatch, leadingOrMatch, leadingXorMatch, retVal, ignoredText;
     
