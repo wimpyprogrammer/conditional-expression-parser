@@ -10,7 +10,7 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
 		<style>
 			body {
 				padding-top: 50px;
@@ -19,6 +19,7 @@
 		</style>
 		<link rel="stylesheet" href="css/bootswatch-flatly-3.3.1.2.min.css">
 		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
 
 		<script src="js/vendor/modernizr-2.6.2.min.js"></script>
 	</head>
@@ -88,8 +89,12 @@
 						'vendor/lodash-2.4.1.min'
 					],
 					'bootstrap': [
-						'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min',
-						'vendor/bootstrap-3.3.1.min'
+						'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min',
+						'vendor/bootstrap-3.1.1.min'
+					],
+					'tour': [
+						'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.min',
+						'vendor/bootstrap-tour-0.10.1.min'
 					]
 				},
 				shim: {
@@ -98,6 +103,13 @@
 					},
 					'jquery': {
 						exports: '$'
+					},
+					'bootstrap': {
+						deps: [ 'jquery' ]
+					},
+					'tour': {
+						exports: 'Tour',
+						deps: [ 'jquery', 'bootstrap' ]
 					}
 			  }
 			});
