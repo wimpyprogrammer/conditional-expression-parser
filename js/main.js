@@ -61,16 +61,24 @@ define(function(require, exports, module) {
         $startTutorial = $('.js-tutorial-start');
     
     $input.change(function() {
-      var expression = (new Submission.Submission($input.val())).expression,
-          output;
+      var input = $input.val(),
+          expression, output;
       
-      if(expression.hasMixedOperatorsDeep()) {
-        output = 'Unable to calculate mixed operators';
+      if(input.trim() === '') {
+        output = '';
       } else {
-        output = '<table>' +
-          '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
-          '<tbody>' + printCells(expression) + '<\/tbody>' +
-          '<\/table>';
+      
+        expression = (new Submission.Submission(input)).expression;
+        
+        if(expression.hasMixedOperatorsDeep()) {
+          output = 'Unable to calculate mixed operators';
+        } else {
+          output = '<table>' +
+            '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
+            '<tbody>' + printCells(expression) + '<\/tbody>' +
+            '<\/table>';
+        }
+        
       }
       
       $output.html(output);
