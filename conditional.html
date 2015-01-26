@@ -10,7 +10,7 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/css/bootstrap.min.css">
 		<style>
 			body {
 				padding-top: 50px;
@@ -19,6 +19,7 @@
 		</style>
 		<link rel="stylesheet" href="css/bootswatch-flatly-3.3.1.2.min.css">
 		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
 
 		<script src="js/vendor/modernizr-2.6.2.min.js"></script>
 	</head>
@@ -47,19 +48,16 @@
 				<div class="navbar-header">
 					<span class="navbar-brand">Conditional Parser</span>
 				</div>
+				<div class="navbar-right">
+					<button class="btn btn-info js-tutorial-start">View Tutorial</button>
+				</div>
 		  </div>
 		</nav>
 
 		<!-- Main jumbotron for a primary marketing message or call to action -->
 		<div class="jumbotron">
 			<div class="container">
-				<textarea id="input"></textarea>
-				<a href="javascript:void(0)" id="example1">1</a>
-				<a href="javascript:void(0)" id="example2">2</a>
-				<a href="javascript:void(0)" id="example3">3</a>
-				<a href="javascript:void(0)" id="example4">4</a>
-				<a href="javascript:void(0)" id="example5">5</a>
-				<a href="javascript:void(0)" id="example6">6</a>
+				<textarea class="js-tutorial-input" id="input"></textarea>
 			</div>
 		</div>
 
@@ -88,8 +86,12 @@
 						'vendor/lodash-2.4.1.min'
 					],
 					'bootstrap': [
-						'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min',
-						'vendor/bootstrap-3.3.1.min'
+						'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.1.1/js/bootstrap.min',
+						'vendor/bootstrap-3.1.1.min'
+					],
+					'tour': [
+						'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.min',
+						'vendor/bootstrap-tour-0.10.1.min'
 					]
 				},
 				shim: {
@@ -98,6 +100,13 @@
 					},
 					'jquery': {
 						exports: '$'
+					},
+					'bootstrap': {
+						deps: [ 'jquery' ]
+					},
+					'tour': {
+						exports: 'Tour',
+						deps: [ 'jquery', 'bootstrap' ]
 					}
 			  }
 			});

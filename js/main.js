@@ -8,7 +8,8 @@ define(function(require, exports, module) {
   
   var $ = require('jquery'),
       Expression = require('expression'),
-      Submission = require('submission');
+      Submission = require('submission'),
+      Tutorial = require('tutorial');
   
   function printHeadings(/*Expression*/ expression, newDepth) {
     var headings = '',
@@ -57,66 +58,55 @@ define(function(require, exports, module) {
   $(function() {
     var $input = $('#input'),
         $output = $('#output'),
-        $example1 = $('#example1'),
-        $example2 = $('#example2'),
-        $example3 = $('#example3'),
-        $example4 = $('#example4'),
-        $example5 = $('#example5'),
-        $example6 = $('#example6');
+        $startTutorial = $('.js-tutorial-start');
     
     $input.change(function() {
-      var expression = (new Submission.Submission($input.val())).expression,
-          output;
+      var input = $input.val(),
+          expression, output;
       
-      if(expression.hasMixedOperatorsDeep()) {
-        output = 'Unable to calculate mixed operators';
+      if(input.trim() === '') {
+        output = '';
       } else {
-        output = '<table>' +
-          '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
-          '<tbody>' + printCells(expression) + '<\/tbody>' +
-          '<\/table>';
+      
+        expression = (new Submission.Submission(input)).expression;
+        
+        if(expression.hasMixedOperatorsDeep()) {
+          output = 'Unable to calculate mixed operators';
+        } else {
+          output = '<table>' +
+            '<thead><tr>' + printHeadings(expression) + '<\/tr><\/thead>' +
+            '<tbody>' + printCells(expression) + '<\/tbody>' +
+            '<\/table>';
+        }
+        
       }
       
       $output.html(output);
     });
     
-    $example1.click(function() {
-      $input.val(
-        '!HasGenerousDeadlinePassed && Active && SelectedPaymentPortalInfo.Portal != PaymentPortal.NoPortal ' + "\r\n" +
-        '&& ( !IsPayPalPortalInUse || (PayPalAccountType != "CannotValidate" && !String.IsNullOrWhiteSpace(PayPalAccountType)));'
-      ).change();
+    $startTutorial.click(function() {
+      var hasStarted = false,
+          userInput;
+      
+      var tutorial = new Tutorial.Tutorial({
+        onShow: function() {
+          // onStart does not fire if the user has previously seen the tutorial
+          if(!hasStarted) {
+            hasStarted = true;
+            userInput = $input.val();
+            $input.val('').change();
+          }
+          $input.change();
+        },
+        onEnd: function(tour) {
+          hasStarted = false;
+          $input.val(userInput).change();
+        }
+      });
+      
+      tutorial.start(true);
     });
     
-    $example2.click(function() {
-      $input.val(
-        '!HasGenerousDeadlinePassed && Active && SelectedPaymentPortalInfo.Portal != PaymentPortal.NoPortal ' + "\r\n" +
-        '&& ( !IsPayPalPortalInUse && (PayPalAccountType != "CannotValidate" && !String.IsNullOrWhiteSpace(PayPalAccountType)));'
-      ).change();
-    });
-    
-    $example3.click(function() {
-      $input.val(
-        'if (PaymentPortalInUse == PaymentPortal.PayPal.GetHashCode() || (!PaymentPortalInUse.HasValue || !WePayPortalInUse || !String.IsNullOrWhiteSpace(PayPalID)))' + "\r\n"
-      ).change();
-    });
-    
-    $example4.click(function() {
-      $input.val(
-        'if (PaymentPortalInUse == PaymentPortal.PayPal.GetHashCode() || (!PaymentPortalInUse.HasValue && !WePayPortalInUse && !String.IsNullOrWhiteSpace(PayPalID)))' + "\r\n"
-      ).change();
-    });
-    
-    $example5.click(function() {
-      $input.val(
-        'if (a || (b && c) )' + "\r\n"
-      ).change();
-    });
-    
-    $example6.click(function() {
-      $input.val(
-        'a ^ (b ^ c)'
-      ).change();
-    });
   });
 
 });
