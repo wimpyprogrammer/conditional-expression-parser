@@ -115,18 +115,6 @@ define(function(require, exports, module) {
     });
   };
   
-  /*Expression.prototype.toArray = function() {
-    var toArray = [],
-        i;
-    for(i = 0; i < this.conditions.length; i++) {
-      toArray.push(this.conditions[i]);
-      if(i < this.operators.length) {
-        toArray.push(this.operators[i]);
-      }
-    }
-    return toArray;
-  };*/
-  
   exports.Expression = Expression;
 
 });
