@@ -13,8 +13,8 @@ define(function(require, exports, module) {
   
   function printHeadings(/*Expression*/ expression, newDepth) {
     var headings = '',
-      depth = newDepth || 0,
-      headingClass, operatorClass;
+        depth = newDepth || 0,
+        headingClass, operatorClass;
     
     expression.conditions.forEach(function(e, i, arr) {
       if(e instanceof Expression.Expression) {
