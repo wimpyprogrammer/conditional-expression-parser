@@ -94,6 +94,8 @@ define(function(require, exports, module) {
 
   $(function() {
     var $input = $('#input'),
+        $inputForm = $('.js-input-form'),
+        $introText = $('.js-intro-text'),
         $alertMixedOperators = $('.js-alert-mixed-operators'),
         $truthTable = $('.js-truth-table'),
         $startTutorial = $('.js-tutorial-start');
@@ -102,19 +104,24 @@ define(function(require, exports, module) {
       var input = $input.val(),
           expression, columnClasses;
       
-      $alertMixedOperators.addClass('hide');
-      $truthTable.addClass('hide');
+      $introText.removeClass('hidden');
+      $inputForm.removeClass('has-error');
+      $alertMixedOperators.addClass('hidden');
+      $truthTable.addClass('hidden');
       
       if(input.trim() !== '') {
+        
+        $introText.addClass('hidden');
       
         expression = (new Submission.Submission(input)).expression;
         columnClasses = calculateColumnClasses(expression);
         
         if(expression.hasMixedOperatorsDeep()) {
-          $alertMixedOperators.removeClass('hide');
+          $inputForm.addClass('has-error');
+          $alertMixedOperators.removeClass('hidden');
         } else {
           
-          $truthTable.removeClass('hide');
+          $truthTable.removeClass('hidden');
           $truthTable.find('thead').html(
             '<tr>' + printHeadings(expression, columnClasses) + '<\/tr>'
           );

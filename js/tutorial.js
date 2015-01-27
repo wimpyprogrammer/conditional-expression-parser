@@ -15,7 +15,7 @@ define(function(require, exports, module) {
         example3 = 'A || ( B ^ (C && D) )',
         options = {
       backdrop: true,
-      backdropPadding: 1,
+      backdropPadding: 10,
       steps: [
         {
           orphan: true,
