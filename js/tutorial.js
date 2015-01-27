@@ -43,7 +43,7 @@ define(function(require, exports, module) {
             if(_options.onShow) { _options.onShow(); }
             resetInput().val(example1).change();
           },
-          element: '#output > table',
+          element: '.js-truth-table',
           placement: 'bottom',
           title: 'A Simple Output',
           content: 'The parser will generate a "truth table" showing all of the code paths in which the expression will evaluate to TRUE.  Our simple example has simple results.'
@@ -61,7 +61,7 @@ define(function(require, exports, module) {
             if(_options.onShow) { _options.onShow(); }
             resetInput().val(example2).change();
           },
-          element: '#output > table',
+          element: '.js-truth-table',
           placement: 'bottom',
           title: 'A Complex Output',
           content: 'Now our truth table is much larger. The different colored columns are used to group conditions within the same expression depth.<br><br>Notice that function parameters and strings are grouped into a single expression even if they look like conditional expressions.'
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
             if(_options.onShow) { _options.onShow(); }
             resetInput().val(example3).change();
           },
-          element: '#output > table',
+          element: '.js-truth-table',
           placement: 'bottom',
           title: 'Required "FALSE"',
           content: 'Now the truth table contains true, blank, and false cells.<br><br>A <strong>blank</strong> cell indicates that the expression will be TRUE whether that condition is TRUE or FALSE.<br><br>A <strong>false</strong> cell indicates that the condition must be FALSE for the expression to be TRUE.'
