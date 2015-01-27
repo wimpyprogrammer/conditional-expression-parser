@@ -11,47 +11,85 @@ define(function(require, exports, module) {
       Submission = require('submission'),
       Tutorial = require('tutorial');
   
-  function printHeadings(/*Expression*/ expression, newDepth) {
-    var headings = '',
+  function calculateColumnClasses(/*Expression*/ expression, newDepth) {
+    var columnClasses = [],
         depth = newDepth || 0,
-        headingClass, operatorClass;
+        columnClass;
     
     expression.conditions.forEach(function(e, i, arr) {
+      
+      if(e instanceof Expression.Expression) {
+        // Recursively add column classes
+        columnClasses = columnClasses.concat(calculateColumnClasses(e, depth + 1));
+      } else {
+        // Add the condition class
+        columnClass = 'condition depth-' + ((depth % 6) + 1);
+        if(i === 0) { columnClass += ' begin-expression'; }
+        if(i === arr.length - 1) { columnClass += ' end-expression'; }
+        columnClasses.push(columnClass);
+      }
+      
+      // Add the operator class
+      if(i < expression.operators.length) {
+        columnClass = 'operator depth-' + ((depth % 6) + 1);
+        columnClasses.push(columnClass);
+      }
+      
+    });
+    
+    return columnClasses;
+  }
+  
+  function printHeadings(/*Expression*/ expression, columnClasses, _startingColumn) {
+    var headings = [],
+        startingColumn = _startingColumn || 0,
+        columnClass;
+    
+    expression.conditions.forEach(function(e, i, arr) {
+      
       if(e instanceof Expression.Expression) {
         // Recursively print sub-expressions
-        headings += printHeadings(e, depth + 1);
+        headings.push(printHeadings(e, columnClasses, startingColumn + headings.length));
       } else {
-        headingClass = 'condition depth-' + ((depth % 4) + 1);
-        if(i === 0) { headingClass += ' begin-expression'; }
-        if(i === arr.length - 1) { headingClass += ' end-expression'; }
-        headings += '<th class="' + headingClass + '">' + e + '<\/th>';
+        columnClass = columnClasses[startingColumn + headings.length];
+        headings.push('<th class="' + columnClass + '">' + e + '<\/th>');
       }
       
       // Print the operator
       if(i < expression.operators.length) {
-        operatorClass = 'operator depth-' + ((depth % 4) + 1);
-        headings += '<th class="' + operatorClass + '">' + expression.operators[i] + '<\/th>';
+        columnClass = columnClasses[startingColumn + headings.length];
+        headings.push('<th class="' + columnClass + '">' + expression.operators[i] + '<\/th>');
       }
+      
     });
-    return headings;
+    
+    return headings.join('\r\n');
   }
   
-  function printCells(/*Expression*/ expression) {
-    var cells = '',
+  function printCells(/*Expression*/ expression, columnClasses) {
+    var rows = [],
         expandedTruePaths = expression.truePaths.expand(),
-        displayValue;
+        cells, displayValue;
     
     expandedTruePaths.forEach(function(expandedTruePath) {
-      cells += '<tr>';
+      
+      cells = [];
       expandedTruePath.forEach(function(truePathCondition, i) {
-        if(i !== 0) { cells += '<td class="operator">&nbsp;<\/td>'; }
+        if(i !== 0) {
+          cells.push('<td class="' + columnClasses[cells.length] + '">&nbsp;<\/td>');
+        }
+        
         displayValue = (truePathCondition.result === null) ? '' : truePathCondition.result;
-        cells += '<td class="condition">' + displayValue + '<\/td>';
+        cells.push('<td class="' + columnClasses[cells.length] + '">' + displayValue + '<\/td>');
       });
-      cells += '<\/tr>';
+      rows.push(cells);
+      
     });
     
-    return cells;
+    // Condense the arrays in an HTML string
+    return rows.reduce(function(html, cells) {
+      return html + '<tr>' + cells.join('\r\n') + '<\/tr>';
+    }, '');
   }
 
   $(function() {
@@ -62,7 +100,7 @@ define(function(require, exports, module) {
     
     $input.change(function() {
       var input = $input.val(),
-          expression, output;
+          expression, columnClasses;
       
       $alertMixedOperators.addClass('hide');
       $truthTable.addClass('hide');
@@ -70,14 +108,19 @@ define(function(require, exports, module) {
       if(input.trim() !== '') {
       
         expression = (new Submission.Submission(input)).expression;
+        columnClasses = calculateColumnClasses(expression);
         
         if(expression.hasMixedOperatorsDeep()) {
           $alertMixedOperators.removeClass('hide');
         } else {
           
           $truthTable.removeClass('hide');
-          $truthTable.find('thead').html('<tr>' + printHeadings(expression) + '<\/tr>');
-          $truthTable.find('tbody').html(printCells(expression));
+          $truthTable.find('thead').html(
+            '<tr>' + printHeadings(expression, columnClasses) + '<\/tr>'
+          );
+          $truthTable.find('tbody').html(
+            printCells(expression, columnClasses)
+          );
           
         }
         
