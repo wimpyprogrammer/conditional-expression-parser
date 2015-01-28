@@ -211,7 +211,7 @@ AddDefaultCharset utf-8
     Options +FollowSymlinks
   # Options +SymLinksIfOwnerMatch
     RewriteEngine On
-  # RewriteBase /
+    RewriteBase /conditional-parser/
 </IfModule>
 
 # ------------------------------------------------------------------------------
@@ -663,3 +663,13 @@ FileETag None
 #        SetOutputFilter INCLUDES
 #    </FilesMatch>
 # </IfModule>
+
+# ------------------------------------------------------------------------------
+# | Custom Rules                                                               |
+# ------------------------------------------------------------------------------
+
+# Redirect /index.html to /
+
+<IfModule mod_rewrite.c>
+   RewriteRule ^(.*)index\.html$ $1 [R=301,L]
+</IfModule>
