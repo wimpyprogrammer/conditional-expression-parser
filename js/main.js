@@ -11,6 +11,43 @@ define(function(require, exports, module) {
       Submission = require('submission'),
       Tutorial = require('tutorial');
   
+  function trackEvent(category, action, label, value, _isInteractive) {
+    var dataLayer = window.dataLayer || [],
+        isInteractive = (_isInteractive === undefined) ? true : _isInteractive;
+    dataLayer.push({
+      'event': 'event',
+      'eventCategory': 'Conditional - ' + category,
+      'eventAction': action,
+      'eventLabel': label,
+      'eventValue': value,
+      'isNonInteractive': !Boolean(isInteractive)
+    });
+  }
+  
+  function trackEventTutorialStart(stepNum) {
+    trackEvent('Tutorial', 'Start', 'Step ' + stepNum);
+  }
+  
+  function trackEventTutorialEnd(stepNum) {
+    trackEvent('Tutorial', 'End', 'Step ' + stepNum);
+  }
+  
+  function trackEventTutorialNext(prevStep, nextStep) {
+    trackEvent('Tutorial', 'Next', 'Step ' + prevStep + ' to ' + nextStep);
+  }
+  
+  function trackEventTutorialPrev(prevStep, nextStep) {
+    trackEvent('Tutorial', 'Prev', 'Step ' + prevStep + ' to ' + nextStep);
+  }
+  
+  function trackEventInputMixedOperators() {
+    trackEvent('Parse', 'Mixed Operators');
+  }
+  
+  function trackEventInputParse() {
+    trackEvent('Parse', 'Success');
+  }
+  
   function calculateColumnClasses(/*Expression*/ expression, newDepth) {
     var columnClasses = [],
         depth = newDepth || 0,
@@ -98,7 +135,8 @@ define(function(require, exports, module) {
         $introText = $('.js-intro-text'),
         $alertMixedOperators = $('.js-alert-mixed-operators'),
         $truthTable = $('.js-truth-table'),
-        $startTutorial = $('.js-tutorial-start');
+        $startTutorial = $('.js-tutorial-start'),
+        lastTutorialStepNum = null;
     
     $input.change(function() {
       var input = $input.val(),
@@ -119,6 +157,7 @@ define(function(require, exports, module) {
         if(expression.hasMixedOperatorsDeep()) {
           $inputForm.addClass('has-error');
           $alertMixedOperators.removeClass('hidden');
+          trackEventInputMixedOperators();
         } else {
           
           $truthTable.removeClass('hidden');
@@ -129,28 +168,46 @@ define(function(require, exports, module) {
             printCells(expression, columnClasses)
           );
           
+          trackEventInputParse();
+          
         }
         
       }
     });
     
     $startTutorial.click(function() {
-      var hasStarted = false,
+      var thisStepNum = function(tour) { return tour.getCurrentStep() + 1; },
           userInput;
       
       var tutorial = new Tutorial.Tutorial({
+        debug: true,
+        //template: tutorialTemplate,
         onShow: function() {
-          // onStart does not fire if the user has previously seen the tutorial
-          if(!hasStarted) {
-            hasStarted = true;
+          // onStart does not fire if the user has previously seen the tutorial,
+          // so detect the start using onShow
+          if(lastTutorialStepNum === null) {
             userInput = $input.val();
             $input.val('').change();
           }
-          $input.change();
         },
-        onEnd: function() {
-          hasStarted = false;
+        onShown: function(tour) {
+          // the step number is only accurate in onShown, not onShow
+          if(lastTutorialStepNum === null) {
+            trackEventTutorialStart(thisStepNum(tour));
+          } else {
+            if(lastTutorialStepNum < thisStepNum(tour)) {
+              trackEventTutorialNext(lastTutorialStepNum, thisStepNum(tour));
+            } else {
+              trackEventTutorialPrev(lastTutorialStepNum, thisStepNum(tour));
+            }
+          }
+          
+          lastTutorialStepNum = thisStepNum(tour);
+        },
+        onEnd: function(tour) {
+          lastTutorialStepNum = null;
           $input.val(userInput).change();
+          trackEventTutorialEnd(thisStepNum(tour));
         }
       });
       
