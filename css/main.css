@@ -1,0 +1,35 @@
+#input {
+	height: 5em;
+}
+TH, TD {
+	text-align: center;
+}
+.table-bordered--dark,
+.table-bordered--dark > THEAD > TR > TH,
+.table-bordered--dark > TBODY > TR > TD {
+	border-color: #000;
+}
+.condition.depth-1 {
+	background-color: #E0F2FF;
+}
+.condition.depth-2 {
+	background-color: #C0E8C5;
+}
+.condition.depth-3 {
+	background-color: #FFF9D3;
+}
+.condition.depth-4 {
+	background-color: #DAC0E8;
+}
+.condition.depth-5 {
+	background-color: #FFE3DC;
+}
+.operator {
+	background-color: #C6C6C6;
+}
+.table-bordered .begin-expression {
+	border-left: 3px solid black;
+}
+.table-bordered .end-expression {
+	border-right: 3px solid black;
+}
