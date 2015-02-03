@@ -181,8 +181,6 @@ define(function(require, exports, module) {
           userInput;
       
       var tutorial = new Tutorial.Tutorial({
-        debug: true,
-        //template: tutorialTemplate,
         onShow: function() {
           // onStart does not fire if the user has previously seen the tutorial,
           // so detect the start using onShow
