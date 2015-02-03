@@ -33,3 +33,7 @@ TH, TD {
 .table-bordered .end-expression {
 	border-right: 3px solid black;
 }
+/* The specificity of Bootstrap Tour is less than Bootstrap Flatly, causing z-index issues */
+.tour-step-backdrop {
+	z-index: 1101 !important;
+}
