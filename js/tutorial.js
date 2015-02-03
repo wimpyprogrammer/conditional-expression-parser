@@ -7,7 +7,7 @@ define(function(require, exports, module) {
   
   function Tutorial(_options) {
     var resetInput = function() {
-      return $input.val('').change();
+      return $input.val('').trigger('tutorial.change');
     };
     
     var example1 = 'if( A || B ) {',
@@ -41,7 +41,7 @@ define(function(require, exports, module) {
         },{
           onShow: function(tour) {
             if(_options.onShow) { _options.onShow(tour); }
-            resetInput().val(example1).change();
+            resetInput().val(example1).trigger('tutorial.change');
           },
           element: '.js-truth-table',
           placement: 'bottom',
@@ -59,7 +59,7 @@ define(function(require, exports, module) {
         },{
           onShow: function(tour) {
             if(_options.onShow) { _options.onShow(tour); }
-            resetInput().val(example2).change();
+            resetInput().val(example2).trigger('tutorial.change');
           },
           element: '.js-truth-table',
           placement: 'bottom',
@@ -77,7 +77,7 @@ define(function(require, exports, module) {
         },{
           onShow: function(tour) {
             if(_options.onShow) { _options.onShow(tour); }
-            resetInput().val(example3).change();
+            resetInput().val(example3).trigger('tutorial.change');
           },
           element: '.js-truth-table',
           placement: 'bottom',
