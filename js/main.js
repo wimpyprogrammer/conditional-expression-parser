@@ -131,6 +131,7 @@ define(function(require, exports, module) {
 
   $(function() {
     var $input = $('#input'),
+        $submit = $('.js-submit'),
         $inputForm = $('.js-input-form'),
         $introText = $('.js-intro-text'),
         $alertMixedOperators = $('.js-alert-mixed-operators'),
@@ -138,7 +139,7 @@ define(function(require, exports, module) {
         $startTutorial = $('.js-tutorial-start'),
         lastTutorialStepNum = null;
     
-    $input.change(function() {
+    $submit.on('click keypress', function() {
       var input = $input.val(),
           expression, columnClasses;
       
