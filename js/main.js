@@ -139,7 +139,7 @@ define(function(require, exports, module) {
         $startTutorial = $('.js-tutorial-start'),
         lastTutorialStepNum = null;
     
-    $submit.on('click keypress', function() {
+    function processInput() {
       var input = $input.val(),
           expression, columnClasses;
       
@@ -174,6 +174,14 @@ define(function(require, exports, module) {
         }
         
       }
+    }
+    
+    $submit.on('click keypress', function() {
+      processInput();
+    });
+    
+    $input.on('tutorial.change', function() {
+      processInput();
     });
     
     $startTutorial.click(function() {
@@ -186,7 +194,7 @@ define(function(require, exports, module) {
           // so detect the start using onShow
           if(lastTutorialStepNum === null) {
             userInput = $input.val();
-            $input.val('').change();
+            $input.val('').trigger('tutorial.change');
           }
         },
         onShown: function(tour) {
@@ -205,7 +213,7 @@ define(function(require, exports, module) {
         },
         onEnd: function(tour) {
           lastTutorialStepNum = null;
-          $input.val(userInput).change();
+          $input.val(userInput).trigger('tutorial.change');
           trackEventTutorialEnd(thisStepNum(tour));
         }
       });
