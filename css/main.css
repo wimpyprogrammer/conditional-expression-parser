@@ -1,6 +1,9 @@
 #input {
 	height: 5em;
 }
+.alert-info a {
+	color: #FFF;
+}
 TH, TD {
 	text-align: center;
 }
