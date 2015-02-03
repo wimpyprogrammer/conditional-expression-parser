@@ -131,6 +131,7 @@ define(function(require, exports, module) {
 
   $(function() {
     var $input = $('#input'),
+        $submit = $('.js-submit'),
         $inputForm = $('.js-input-form'),
         $introText = $('.js-intro-text'),
         $alertMixedOperators = $('.js-alert-mixed-operators'),
@@ -138,7 +139,7 @@ define(function(require, exports, module) {
         $startTutorial = $('.js-tutorial-start'),
         lastTutorialStepNum = null;
     
-    $input.change(function() {
+    function processInput(trackEvents) {
       var input = $input.val(),
           expression, columnClasses;
       
@@ -157,7 +158,8 @@ define(function(require, exports, module) {
         if(expression.hasMixedOperatorsDeep()) {
           $inputForm.addClass('has-error');
           $alertMixedOperators.removeClass('hidden');
-          trackEventInputMixedOperators();
+          
+          if(trackEvents) { trackEventInputMixedOperators(); }
         } else {
           
           $truthTable.removeClass('hidden');
@@ -168,11 +170,19 @@ define(function(require, exports, module) {
             printCells(expression, columnClasses)
           );
           
-          trackEventInputParse();
+          if(trackEvents) { trackEventInputParse(); }
           
         }
         
       }
+    }
+    
+    $submit.on('click keypress', function() {
+      processInput(true);
+    });
+    
+    $input.on('tutorial.change', function() {
+      processInput(false);
     });
     
     $startTutorial.click(function() {
@@ -180,14 +190,12 @@ define(function(require, exports, module) {
           userInput;
       
       var tutorial = new Tutorial.Tutorial({
-        debug: true,
-        //template: tutorialTemplate,
         onShow: function() {
           // onStart does not fire if the user has previously seen the tutorial,
           // so detect the start using onShow
           if(lastTutorialStepNum === null) {
             userInput = $input.val();
-            $input.val('').change();
+            $input.val('').trigger('tutorial.change');
           }
         },
         onShown: function(tour) {
@@ -206,7 +214,7 @@ define(function(require, exports, module) {
         },
         onEnd: function(tour) {
           lastTutorialStepNum = null;
-          $input.val(userInput).change();
+          $input.val(userInput).trigger('tutorial.change');
           trackEventTutorialEnd(thisStepNum(tour));
         }
       });
