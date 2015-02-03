@@ -139,7 +139,7 @@ define(function(require, exports, module) {
         $startTutorial = $('.js-tutorial-start'),
         lastTutorialStepNum = null;
     
-    function processInput() {
+    function processInput(trackEvents) {
       var input = $input.val(),
           expression, columnClasses;
       
@@ -158,7 +158,8 @@ define(function(require, exports, module) {
         if(expression.hasMixedOperatorsDeep()) {
           $inputForm.addClass('has-error');
           $alertMixedOperators.removeClass('hidden');
-          trackEventInputMixedOperators();
+          
+          if(trackEvents) { trackEventInputMixedOperators(); }
         } else {
           
           $truthTable.removeClass('hidden');
@@ -169,7 +170,7 @@ define(function(require, exports, module) {
             printCells(expression, columnClasses)
           );
           
-          trackEventInputParse();
+          if(trackEvents) { trackEventInputParse(); }
           
         }
         
@@ -177,11 +178,11 @@ define(function(require, exports, module) {
     }
     
     $submit.on('click keypress', function() {
-      processInput();
+      processInput(true);
     });
     
     $input.on('tutorial.change', function() {
-      processInput();
+      processInput(false);
     });
     
     $startTutorial.click(function() {
