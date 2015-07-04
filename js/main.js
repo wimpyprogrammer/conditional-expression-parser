@@ -9,7 +9,7 @@ define(function(require, exports, module) {
   var $ = require('jquery'),
       Expression = require('expression'),
       Submission = require('submission'),
-      Tutorial = require('tutorial');
+      Tutorial = require('tutorial.2');
   
   function trackEvent(category, action, label, value, _isInteractive) {
     var dataLayer = window.dataLayer || [],
@@ -135,7 +135,7 @@ define(function(require, exports, module) {
         $inputForm = $('.js-input-form'),
         $introText = $('.js-intro-text'),
         $alertMixedOperators = $('.js-alert-mixed-operators'),
-        $truthTable = $('.js-truth-table'),
+        $resultTable = $('.js-result-table'),
         $startTutorial = $('.js-tutorial-start'),
         lastTutorialStepNum = null;
     
@@ -146,7 +146,7 @@ define(function(require, exports, module) {
       $introText.removeClass('hidden');
       $inputForm.removeClass('has-error');
       $alertMixedOperators.addClass('hidden');
-      $truthTable.addClass('hidden');
+      $resultTable.addClass('hidden');
       
       if(input.trim() !== '') {
         
@@ -162,11 +162,11 @@ define(function(require, exports, module) {
           if(trackEvents) { trackEventInputMixedOperators(); }
         } else {
           
-          $truthTable.removeClass('hidden');
-          $truthTable.find('thead').html(
+          $resultTable.removeClass('hidden');
+          $resultTable.find('thead').html(
             '<tr>' + printHeadings(expression, columnClasses) + '<\/tr>'
           );
-          $truthTable.find('tbody').html(
+          $resultTable.find('tbody').html(
             printCells(expression, columnClasses)
           );
           
