@@ -3,7 +3,7 @@
 
 # TEAM
 
-    Andrew Keller -- Lead Developer -- http://www.wimpyprogrammer.com/
+    Drew Keller -- Lead Developer -- http://www.wimpyprogrammer.com/
 
 # TECHNOLOGY COLOPHON
 
