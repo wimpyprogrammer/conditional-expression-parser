@@ -10,18 +10,17 @@
 		<meta name="description" content="">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css">
 		<style>
 			body {
 				padding-top: 50px;
 				padding-bottom: 20px;
 			}
 		</style>
-		<link rel="stylesheet" href="css/bootswatch-flatly-3.3.1.2.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.2/flatly/bootstrap.min.css" integrity="sha256-auTsXF5oThKHqHhQ5+ag/yuSL8Jccf/kdHUEqBrsYRE=" crossorigin="anonymous" />
 		<link rel="stylesheet" href="css/main.css">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/css/bootstrap-tour.min.css" integrity="sha256-Y8SoEwf1N4FaCp1IZxKCNrcjqEzua3jT8YguhV7VMlc=" crossorigin="anonymous" />
 
-		<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js" integrity="sha256-zyXsGPIj9MUc4RKKQuZEzcIkTYj4nRpRRA2dvlH07+g=" crossorigin="anonymous"></script>
 	</head>
 	<body>
 		<!-- Google Tag Manager -->
@@ -105,28 +104,15 @@
 			</footer>
 		</div> <!-- /container -->
 		
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js"></script>
-		<script>window.define || document.write('<script src="js/vendor/require-2.1.15.min.js"><\/script>')</script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.15/require.min.js" integrity="sha256-reoTKh0aFIxTE6MV1DiTAJgcSN9OPc1CV35/ML59Ork=" crossorigin="anonymous"></script>
 		<script type="text/javascript">
 			require.config({
 				baseUrl: 'js/',
 				paths: {
-					'jquery': [
-						'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min',
-						'vendor/jquery-2.1.3.min'
-					],
-					'lodash': [
-						'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min',
-						'vendor/lodash-2.4.1.min'
-					],
-					'bootstrap': [
-						'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min',
-						'vendor/bootstrap-3.3.2.min'
-					],
-					'tour': [
-						'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.min',
-						'vendor/bootstrap-tour-0.10.1.min'
-					]
+					'jquery': 'https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min',
+					'lodash': 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min',
+					'bootstrap': 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/js/bootstrap.min',
+					'tour': 'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.1/js/bootstrap-tour.min'
 				},
 				shim: {
 					'underscore': {
