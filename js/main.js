@@ -9,7 +9,7 @@ define(function(require, exports, module) {
   var $ = require('jquery'),
       Expression = require('expression'),
       Submission = require('submission'),
-      Tutorial = require('tutorial.2');
+      Tutorial = require('tutorial');
   
   function trackEvent(category, action, label, value, _isInteractive) {
     var dataLayer = window.dataLayer || [],
